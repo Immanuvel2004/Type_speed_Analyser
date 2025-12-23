@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Typing Speed Test</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script>
+        let startTime = null;
+
+        function startTyping() {
+            startTime = new Date().getTime();
+
+            const textarea = document.getElementById("typed_text");
+            const submitBtn = document.getElementById("submit_btn");
+
+            textarea.disabled = false;
+            textarea.focus();
+            submitBtn.disabled = false;
+        }
+
+        function submitTest() {
+            let endTime = new Date().getTime();
+            document.getElementById("time_taken").value =
+                (endTime - startTime) / 1000;
+        }
+    </script>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Typing Speed Test</h2>
+
+    <!-- ================= HOME PAGE ================= -->
+    {% if not text %}
+        <div style="text-align:center; margin-top:40px;">
+            <p>Click start to begin the typing test</p>
+            <button onclick="window.location.href='/test/'">
+                Start
+            </button>
+        </div>
+
+    <!-- ================= TEST PAGE ================= -->
+    {% else %}
+        <div class="text-box">
+            {{ text|linebreaks }}
+        </div>
+
+        <form method="post" action="/result/" onsubmit="submitTest()">
+            {% csrf_token %}
+
+            <textarea id="typed_text"
+                      name="typed_text"
+                      placeholder="Click START and begin typing..."
+                      disabled></textarea>
+
+            <input type="hidden" name="time_taken" id="time_taken">
+
+            <div class="buttons">
+                <button type="button" onclick="startTyping()">
+                    Start
+                </button>
+
+                <button type="submit" id="submit_btn" disabled>
+                    Submit
+                </button>
+            </div>
+        </form>
+    {% endif %}
+</div>
+
+</body>
+</html>
